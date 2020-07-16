@@ -9,4 +9,6 @@ https://support.ledger.com/hc/en-us/articles/115005165269-Connection-issues-with
 wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash
 ```
 
-todo:
+All donations to ELA address EUSMsck3svNiacva9LfwrLfbvNnUU27z77 or CryptoName mbutcho are much appreciated.
+
+### Thank you and enjoy!

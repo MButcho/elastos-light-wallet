@@ -176,6 +176,12 @@ module.exports = (props) => {
   <div>
     <UseLedgerButton App={App} GuiToggles={GuiToggles}/>
   </div>
+  
+  <div className="statusRequests" style={App.getDevelopMode() ? {display: 'flex'} : {display: 'none'}}>
+      <button className="requestsButtons padding_5px display_inline dark-hover br10 cursor_def" onClick={(e) => App.listRequests()}>List requests</button>
+      <button className="requestsButtons padding_5px display_inline dark-hover br10 cursor_def m15L" onClick={(e) => App.clearRequests()}>Clear requests</button>
+    </div>
+    
   <div className="bg-modal" style={showWalletLogin ? {display: 'flex'} : {display: 'none'}}>
     <div className="modalContent w450px h250px">
       <div className="closeModal" onClick={(e) => closeModal()}>
@@ -191,7 +197,7 @@ module.exports = (props) => {
         </select>
       </div>
       <div className="m15T">
-        <input tabIndex="2" className="enterPassword" type={showLoginPassword ? "text" : "password"} size="18" id="loginPassword" placeholder="Enter Password" name="loginPassword" onKeyDown={handleKeyDown}/>
+        <input tabIndex="2" className="enterPassword" type={showLoginPassword ? "text" : "password"} size="18" id="loginPassword" placeholder="Enter Password" name="loginPassword" onKeyDown={(e) => handleKeyDown(e)}/>
         <img className={showLoginPassword ? "passwordIcon passwordHide" : "passwordIcon passwordShow"} onClick={(e) => showPassword()} />
       </div>
       <div className="m15T">
