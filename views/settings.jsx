@@ -1,9 +1,10 @@
 const React = require('react');
 const Banner = require('./partial/banner.jsx');
-const GuiUtils = require('../scripts/GuiUtils.js');
+
 const {dialog} = require('electron').remote;
 const electron = require('electron');
 const remote = electron.remote;
+
 let _userCurrency = '';
 let userDefinedWalletPath;
 let userDefinedNodeURL = false;
@@ -27,10 +28,12 @@ let passwordsComplexity = true;
 let passwordsMatch = true;
 let editableCurrency = false;
 let search = '';
+let listenerFunction;
 
 module.exports = (props) => {
   const App = props.App;
   const GuiToggles = props.GuiToggles;
+  const GuiUtils = props.GuiUtils;
   const defaultWalletPath = App.getDefaultWalletPath();
   _userCurrency = App.getCurrentCurrency();
   _userNetworkIx = App.getCurrentNetworkIx();
@@ -253,6 +256,7 @@ module.exports = (props) => {
       GuiUtils.setChecked('userAdvancedFeatures', false);
     }
     
+    App.showBanner(`Configuration file reloaded`, 'bg_green color_white banner-look', true);
     App.renderApp();
   }
   
@@ -263,20 +267,25 @@ module.exports = (props) => {
         App.renderApp();
         return false;
       }
-    }    
+    }
     showExportPasswordModal = true;
+    window.addEventListener('keyup', listenerFunction);
     App.renderApp();
   }
   
   const showNewPassword = () => {
     showNewPasswordModal = true;
+    window.addEventListener('keyup', listenerFunction);
     App.renderApp();
   }
   
   const closeModal = () => {
-    showExportPasswordModal = false;
-    showNewPasswordModal = false;
-    App.renderApp();    
+    if (showExportPasswordModal || showNewPasswordModal) {
+      showExportPasswordModal = false;
+      showNewPasswordModal = false;
+      window.removeEventListener('keyup', listenerFunction);
+      App.renderApp();
+    }
   }
   
   const changePassword = () => {
@@ -369,20 +378,23 @@ module.exports = (props) => {
     if (isValid) {
       GuiUtils.setValue('exportPassword', '');
       GuiUtils.setValue('exportPassphrase', '');
-      showExportPasswordModal = false;
+      closeModal();
       App.setCreateScreen("export");
       GuiToggles.showExportMnemonic();
     } else {
-      showExportPasswordModal = false;
+      closeModal();
     }
-    App.renderApp();
   }
   
+  window.addEventListener('load', (event) => {
+    listenerFunction = GuiToggles.modalESCListener.bind(null, {closeModal});
+  });
   
   return (
 <div id="settings">
+  <a onClick={(e) => exitPage()}></a>
   <Banner App={App} GuiToggles={GuiToggles} page="settings"/>
-  <div className="settings-main-div">    
+  <div className="settings-main-div">
     <div>  
       <img className="settingsBack scale-hover" src="artwork/voting-back.svg" height="38px" width="38px" onClick={(e) => exitPage()}/>
       <div className="settingsTitle">Settings</div>      
@@ -488,6 +500,7 @@ module.exports = (props) => {
     </div>    
   </div>
   <div className="bg-modal w400px h200px" style={showExportPasswordModal ? {display: 'flex'} : {display: 'none'}}>
+    <a onClick={(e) => closeModal()}></a>
     <div className="modalContent w350px h180px">
       <div className="closeModal" onClick={(e) => closeModal()}>
         <img className="scale-hover" src="artwork/voting-back.svg" height="38px" width="38px"/>
@@ -505,6 +518,7 @@ module.exports = (props) => {
     </div>
   </div>
   <div className="bg-modal w400px h330px" style={showNewPasswordModal ? {display: 'flex'} : {display: 'none'}}>
+    <a onClick={(e) => closeModal()}></a>
     <div className="modalContent w350px h300px">
       <div className="closeModal" onClick={(e) => closeModal()}>
         <img className="scale-hover" src="artwork/voting-back.svg" height="38px" width="38px"/>

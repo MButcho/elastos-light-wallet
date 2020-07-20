@@ -1,7 +1,6 @@
 const React = require('react');
 const Menu = require('./partial/menu.jsx');
 const Banner = require('./partial/banner.jsx');
-const GuiUtils = require('../scripts/GuiUtils.js');
 
 module.exports = (props) => {
   const App = props.App;
@@ -24,7 +23,6 @@ module.exports = (props) => {
       return (<ScreenExport/>)
     }
   }
-  
   
   const ScreenCreate = () => {
     return (
@@ -79,28 +77,18 @@ module.exports = (props) => {
         <p>Back</p>
       </button>
     </div>
-  
-    {/*<div>
-      <p className="gradient-font font_size20 ta_center list-none" >Tips</p>
-      <ul className="color_white ta_left">
-        <li className="color_red font_size16">On a piece of paper, write down this mnemonic phrase in the exact same order it appears.</li>
-        <li className="color_red font_size16">If you lose this mnemonic phrase, there will be no way to recover your coins.</li>
-        <li>Make sure to keep a backup of the mnemonic it in a safe place that only you can access.</li>
-      </ul>
-    </div>*/}
-  </div>
-    );
+  </div>);
   }
   
   return (
-<div id="create">
-  <Banner App={App} GuiToggles={GuiToggles} page="create"/>
-  <Menu App={App} openDevTools={openDevTools} GuiToggles={GuiToggles} page="create"/>
-  <header>
-    <nav id="createMenuOpen" title="menu" onClick={(e) => showMenu()}>
-      <img src="artwork/nav.svg" className="nav-icon dark-hover" onClick={(e) => showMenu()}/>
-    </nav>
-  </header>
-  <CreateScreen/>
-</div>);
+  <div id="create">
+    <Banner App={App} GuiToggles={GuiToggles} page="create"/>
+    <Menu App={App} openDevTools={openDevTools} GuiToggles={GuiToggles} page="create"/>
+    <header>
+      <nav id="createMenuOpen" title="menu" onClick={(e) => showMenu()}>
+        <img src="artwork/nav.svg" className="nav-icon dark-hover" onClick={(e) => showMenu()}/>
+      </nav>
+    </header>
+    <CreateScreen/>
+  </div>);
 }

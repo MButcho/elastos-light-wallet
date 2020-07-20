@@ -21,6 +21,7 @@ let mnemonicExport = '';
 let derivationPathExport = '';
 let usePassphraseFlag = false;
 let createScreen = 'create';
+let lastWallet = '';
 
 /* Default variables */
 const defaultCurrency = "usd";
@@ -50,7 +51,7 @@ let currentAdvancedFeatures = defaultAdvancedFeatures;
 /* Config.ini */
 let configFile = "Config.ini";
 let configFilePath = path.join(userDataPath, configFile);
-let defaultConfigContent = "currency="+defaultCurrency+"\nnetworkIx="+defaultNetworkIx+"\nnodeURL="+defaultNodeURL+"\nwalletPath=\nshowBalance="+defaultShowBalance+"\nadvancedFeatures="+defaultAdvancedFeatures;
+let defaultConfigContent = "currency="+defaultCurrency+"\nnetworkIx="+defaultNetworkIx+"\nnodeURL="+defaultNodeURL+"\nwalletPath=\nshowBalance="+defaultShowBalance+"\nadvancedFeatures="+defaultAdvancedFeatures+"\nlastWallet="+lastWallet;
 let configInitialized = false;
 
 /* modules */
@@ -125,8 +126,6 @@ let usePasswordFlag = false;
 
 let passwordRegEx = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/;
 
-let refreshCandiatesFlag = true;
-
 let generatedPrivateKeyHex = undefined;
 
 let generatedMnemonic = undefined;
@@ -156,6 +155,7 @@ let parsedProducerList = {
 };
 
 let candidateVoteListStatus = 'No Candidate Votes Requested Yet';
+let voteValue = 0;
 
 let parsedCandidateVoteList = {
   candidateVotes: [],
@@ -214,6 +214,7 @@ let cryptoNameELAAddress = '';
 
 let requests = [];
 let urls = [];
+let TX_TYPE = '';
 
 let loadedCurrenciesList = false;
 let parsedFiatList = [];
@@ -234,8 +235,7 @@ const init = (_GuiToggles) => {
   requestRssFeed();
   if (feeAccount === '') {
     requestFeeAccount();
-  }
-  requestFee();
+  }  
 };
 
 const setAppClipboard = (clipboard) => {
@@ -333,22 +333,6 @@ const changeNodeURL = () => {
   renderApp();
 };
 
-/*
-const refreshBlockchainData = () => {
-  requestTransactionHistory();
-  requestBalance();
-  requestUnspentTransactionOutputs();
-  requestBlockchainState();
-  CoinGecko.requestPriceData();
-  //clearParsedProducerList();
-  //clearParsedCandidateVoteList();
-  loadedProducerList = false;
-  loadedVotes = false;
-  requestListOfProducers(true);
-  requestListOfCandidateVotes();
-  renderApp();
-};*/
-
 const publicKeyCallback = (message) => {
   if (LOG_LEDGER_POLLING) {
     mainConsole.log(`publicKeyCallback ${JSON.stringify(message)}`);
@@ -409,14 +393,11 @@ const pollForData = () => {
       break;
     case 4:
       if (address != undefined) {
-        //if (refreshCandiatesFlag) {
-          // mainConsole.log(getCurrentDateTime(), "refreshCandiatesFlag", refreshCandiatesFlag);
-          requestListOfProducers(false);
-          requestListOfCandidateVotes();
-        //}
+        requestListOfProducers(false);
+        requestListOfCandidateVotes();
       }
       //requestRssFeed();
-      //requestFee();
+      requestFee();
       //requestFeeAccount();
       if (!loadedCurrenciesList) { // load once
         CoinGecko.requestCurrencies();
@@ -430,7 +411,7 @@ const pollForData = () => {
       // only check every 10 seconds for a change in device status.
       pollDataTypeIx = 0;
       clearRequests();
-      // mainConsole.log(getCurrentDateTime(), "POLL_INTERVAL", POLL_INTERVAL, "pollForDataTimerID", pollForDataTimerID);
+      //mainConsole.log(getCurrentDateTime(), "POLL_INTERVAL", POLL_INTERVAL, "pollForDataTimerID", pollForDataTimerID);
       if (pollForDataTimerID) clearTimeout(pollForDataTimerID);
       pollForDataTimerID = setTimeout(pollForData, POLL_INTERVAL);
       break;
@@ -564,7 +545,12 @@ const requestBlockchainData = (_userRequest) => {
   
   CoinGecko.requestPriceData();
   
-  if (_userRequest) reloadProducersAndVotes(_userRequest);
+  /* Clear producers and reset timer poll if user request */
+  if (_userRequest) {
+    reloadProducersAndVotes(_userRequest);
+    pollDataTypeIx = MAX_POLL_DATA_TYPE_IX;
+    setPollForAllInfoTimer();
+  }
 };
 
 const reloadProducersAndVotes = (_userRequest) => {
@@ -764,6 +750,8 @@ const loginWithWallet = () => {
     privateKeyWallet = '';
     requestBlockchainData();
     isLoggedIn = true;
+    lastWallet = walletNameLogin;
+    updateLastWallet(lastWallet);
     return true;
   }
 }
@@ -848,7 +836,7 @@ const sendAmountToAddressErrorCallback = (error) => {
 };
 
 const sendAmountToAddressReadyCallback = (transactionJson) => {
-  // mainConsole.log('sendAmountToAddressReadyCallback ' + JSON.stringify(transactionJson));
+  mainConsole.log('sendAmountToAddressReadyCallback ' + JSON.stringify(transactionJson));
   if (transactionJson.status == 400) {
     sendToAddressStatuses.length = 0;
     const message = `Transaction Error.  Status: ${transactionJson.status}  Result:${transactionJson.result}`;
@@ -870,7 +858,7 @@ const sendAmountToAddressReadyCallback = (transactionJson) => {
     elt.txDetailsUrl = link;
     elt.txHash = transactionJson.result;
     sendToAddressStatuses.length = 0;
-    const message = 'Sending transaction successful.';
+    const message = `${TX_TYPE} transaction successful.`;
     bannerClass = 'bg_green color_white banner-look';
     sendToAddressStatuses.push(message);
     bannerStatus = message;
@@ -996,8 +984,7 @@ const checkTransactionHistory = () => {
         return false;
       }
     }
-  }
-  
+  }  
   return true;
 };
 
@@ -1019,6 +1006,7 @@ const getTxByteLength = (transactionHex) => {
 };
 
 const consolidateUTXOs = () => {
+  TX_TYPE = "Consolidating";
   let maxTXSize;
   let utxoMaxCount;
   if (useLedgerFlag) {
@@ -1127,6 +1115,7 @@ const showConsolidateButton = () => {
 }
 
 const sendAmountToAddress = () => {
+  TX_TYPE = "Sending";
   const isValid = validateInputs();
   if (!isValid) {
     return false;
@@ -1219,7 +1208,7 @@ const sendAmountToAddressCallback = (encodedTx) => {
 };
 
 const requestListOfProducersErrorCallback = (response) => {
-  producerListStatus = `Producers Error, Retrying`;
+  producerListStatus = `Error loading Producers`;
   renderApp();
 };
 
@@ -1250,7 +1239,8 @@ const requestListOfProducersReadyCallback = (response, _userRequest) => {
   //mainConsole.log(getCurrentDateTime(), 'STARTED Producers Callback');
   clearParsedProducerList();
   if (response.status !== 200) {
-    producerListStatus = `Producers Error: ${JSON.stringify(response)}`;
+    //producerListStatus = `Producers Error: ${JSON.stringify(response)}`;
+    producerListStatus = `Error loading Producers`;
   } else {
     parsedProducerList.totalvotes = 0;
     parsedProducerList.totalcounts = 0;
@@ -1337,7 +1327,7 @@ const selectActiveVotes = () => {
         }
       });
     } else {
-      bannerStatus = `Previous voting record not found.`;
+      bannerStatus = `Previous Votes not found.`;
       bannerClass = 'landing-btnbg color_white banner-look';
       GuiToggles.showAllBanners(false);
     }
@@ -1359,26 +1349,28 @@ const requestListOfCandidateVotesErrorCallback = (response) => {
   mainConsole.log('ERRORED Candidate Votes Callback', response);
   const displayRawError = true;
   if (displayRawError) {
-    candidateVoteListStatus = `Candidate Votes Error: ${JSON.stringify(response)}`;
+    //candidateVoteListStatus = `Candidate Votes Error: ${JSON.stringify(response)}`;
+    candidateVoteListStatus = `Error loading Votes`;
   }
   renderApp();
 };
 
 const clearParsedCandidateVoteList = () => {
+  voteValue = 0;
   parsedCandidateVoteList = {};
   parsedCandidateVoteList.candidateVotes = [];
   parsedCandidateVoteList.lastVote = [];
 }
 
 const requestListOfCandidateVotesReadyCallback = (response) => {
-  candidateVoteListStatus = 'Candidate Votes Received';
   loadedVotes = false;
 
   // mainConsole.log('STARTED Candidate Votes Callback', response);
   clearParsedCandidateVoteList();
 
   if (response.status !== 200) {
-    candidateVoteListStatus = `Candidate Votes Error: ${JSON.stringify(response)}`;
+    //candidateVoteListStatus = `Candidate Votes Error: ${JSON.stringify(response)}`;
+    candidateVoteListStatus = `Error loading Votes`;
   } else {
     if (response.result) {
       parsedCandidateVoteList.lastVote = response.result[0].Vote_Header.Nodes;
@@ -1387,6 +1379,7 @@ const requestListOfCandidateVotesReadyCallback = (response) => {
         // mainConsole.log('INTERIM Candidate Votes Callback', candidateVote);
         const header = candidateVote.Vote_Header;
         if (header.Is_valid === 'YES') {
+          voteValue = BigNumber(header.Value).toFixed(3);
           const body = candidateVote.Vote_Body;
           body.forEach((candidateVoteElt) => {
             const parsedCandidateVote = {};
@@ -1405,6 +1398,13 @@ const requestListOfCandidateVotesReadyCallback = (response) => {
       });      
     }
     loadedVotes = true;
+    if (parsedCandidateVoteList.candidateVotes.length > 0) {
+      candidateVoteListStatus = `Votes Received`;
+    } else if (parsedCandidateVoteList.lastVote.length > 0) {
+      candidateVoteListStatus = `Previous Votes Received`;
+    } else {
+      candidateVoteListStatus = `Previous Votes not found`;
+    }
     // mainConsole.log('INTERIM Candidate Votes Callback', response.result);
   }
   // mainConsole.log('SUCCESS Candidate Votes Callback');
@@ -1425,6 +1425,7 @@ const requestListOfCandidateVotes = () => {
 };
 
 const sendVoteTx = () => {
+  TX_TYPE = "Voting";
   try {
     const unspentTransactionOutputs = parsedUnspentTransactionOutputs;
     // mainConsole.log('sendVoteTx.unspentTransactionOutputs ' + JSON.stringify(unspentTransactionOutputs));
@@ -1479,7 +1480,7 @@ const sendVoteTx = () => {
       if (unspentTransactionOutputs) {
         const tx = TxFactory.createUnsignedVoteTx(unspentTransactionOutputs, publicKey, feeAmountSats, candidates, feeAccount);
         const encodedUnsignedTx = TxTranscoder.encodeTx(tx, false);
-        candidateVoteListStatus = `Voting for ${parsedProducerList.producersCandidateCount} candidates.`;
+        candidateVoteListStatus = `Voting for ${parsedProducerList.producersCandidateCount} candidates`;
         showLedgerConfirmBanner(getTxByteLength(encodedUnsignedTx));
         const sendVoteLedgerCallback = (message) => {
           if (LOG_LEDGER_POLLING) {
@@ -1499,7 +1500,7 @@ const sendVoteTx = () => {
           const encodedTx = TxSigner.addSignatureToTx(tx, publicKey, signature);
           sendVoteCallback(encodedTx);
         };
-        candidateVoteListStatus += ' please confirm tx on ledger.';
+        //candidateVoteListStatus += ', please confirm TX on Ledger';
         LedgerComm.sign(encodedUnsignedTx, sendVoteLedgerCallback);
       } else {
         bannerStatus = `UTXOs have not been retrieved yet, please wait ...`;
@@ -1589,7 +1590,7 @@ const sendVoteReadyCallback = (transactionJson) => {
   } else {
     candidateVoteListStatus = `Voting transaction successful.`;
     GuiToggles.showHome();
-    bannerStatus = `Voting transaction successful.`;
+    bannerStatus = `${TX_TYPE} transaction successful.`;
     bannerClass = 'bg_green color_white banner-look';
     requestTransactionHistory();
     GuiToggles.showAllBanners(true);
@@ -1599,7 +1600,8 @@ const sendVoteReadyCallback = (transactionJson) => {
 };
 
 const getTransactionHistoryErrorCallback = (response) => {
-  transactionHistoryStatus = `History Error: ${JSON.stringify(response)}`;
+  //transactionHistoryStatus = `History Error: ${JSON.stringify(response)}`;
+  transactionHistoryStatus = `Error loading History`;
   renderApp();
 };
 
@@ -1721,7 +1723,8 @@ const getBalanceReadyCallback = (balanceResponse) => {
     balanceStatus = `Balance Received.`;
     balance = balanceResponse.Result;
   } else {
-    balanceStatus = `Balance Received Error:${balanceResponse.Error}`;
+    //balanceStatus = `Balance Received Error:${balanceResponse.Error}`;
+    balanceStatus = `Error receiving balance`;
     balance = undefined;
   }
   // mainConsole.log('getBalanceReadyCallback ' + JSON.stringify(balanceResponse));
@@ -2086,12 +2089,6 @@ const writeSendData = () => {
   feeRequested = feeAmountSats;
 }
 
-/*
-const setRefreshCandiatesFlag = (_refreshCandiatesFlag) => {
-  refreshCandiatesFlag = _refreshCandiatesFlag;
-  // mainConsole.log('refreshCandiatesFlag', refreshCandiatesFlag);
-};*/
-
 const getSendStep = () => {
   return sendStep;
 };
@@ -2114,6 +2111,10 @@ const getCandidateVoteListStatus = () => {
 
 const getParsedCandidateVoteList = () => {
   return parsedCandidateVoteList;
+};
+
+const getVoteValue = () => {
+  return voteValue;
 };
 
 const getAddressOrBlank = () => {
@@ -2154,7 +2155,9 @@ const getRssFeedReadyCallback = (response) => {
 const requestFee = async () => {
   const feeUrl = `${getRestService()}/api/v1/fee`;
   feeStatus = 'Fee Requested';
-  getJson(feeUrl, getFeeReadyCallback, getFeeErrorCallback);
+  if (initFees === '') {
+    getJson(feeUrl, getFeeReadyCallback, getFeeErrorCallback);
+  }
 };
 
 const getFeeErrorCallback = (error) => {
@@ -2327,6 +2330,7 @@ const createWalletFile = (walletName, password, text, override) => {
       if (err) throw err;
       if (!override) {
         bannerStatus = `Local wallet created successfully.`;
+        updateLastWallet(walletName);
       } else {
         bannerStatus = `Password changed successfully.`;
       }
@@ -2457,12 +2461,24 @@ const setCurrentCurrency = (_currency) => {
   CoinGecko.requestPriceData();
 }
 
-const createConfigFile = () => {    
+const createConfigFile = (readyCallback, errorCallback) => {    
   if (!fs.existsSync(configFilePath)) {  
-  fs.writeFile(configFilePath, defaultConfigContent, "utf8", (err) => {
-    if (err) throw err;
-  });
+    fs.writeFile(configFilePath, defaultConfigContent, "utf8", (err) => {
+      if (err) {
+        errorCallback(err);
+      } else {
+        readyCallback("File created");
+      }      
+    });
   }
+}
+
+const createConfigFileReady = (result) => {
+  readConfigFile();
+}
+
+const createConfigFileError = (error) => {
+  console.log(error);
 }
 
 const readConfigFile = () => {
@@ -2478,6 +2494,7 @@ const readConfigFile = () => {
         if (item.indexOf('walletPath') >= 0) configWalletPath = value;
         if (item.indexOf('showBalance') >= 0) configShowBalance = value.toLowerCase() == "true" ? true : false;
         if (item.indexOf('advancedFeatures') >= 0) configAdvancedFeatures = value.toLowerCase() == "true" ? true : false;
+        if (item.indexOf('lastWallet') >= 0) lastWallet = value;
         if (item.indexOf('developMode') >= 0) developMode = value.toLowerCase() == "true" ? true : false;
       });
       
@@ -2505,21 +2522,33 @@ const readConfigFile = () => {
       currentShowBalance = configShowBalance;
       currentAdvancedFeatures = configAdvancedFeatures;
       configInitialized = true;
-      //mainConsole.log(`Configuration file initialized.`)
-      renderApp();
-      return data;
+      //mainConsole.log(`Configuration file initialized.`);
     } else {
-      createConfigFile();
-      var data = readConfigFile();
-      return data;
+      createConfigFile(createConfigFileReady, createConfigFileError);
     }    
   }
 }
 
+const updateLastWallet = (_walletName) => {
+  let updateConfigContent = "currency="+configCurrency+"\nnetworkIx="+configNetworkIx+"\nnodeURL="+configNodeURL+"\nwalletPath=\nshowBalance="+configShowBalance+"\nadvancedFeatures="+configAdvancedFeatures+"\nlastWallet="+_walletName;
+  if (developMode) updateConfigContent +="\ndevelopMode="+developMode;
+  fs.writeFile(configFilePath, updateConfigContent, "utf8", (err) => {
+    if (err) throw err;
+    return true;
+  });
+}
+
 const updateConfigFile = (updateCurrency, updateNetworkIx, updateNodeURL, updateWalletPath, updateShowBalance, updateAdvancedFeatures) => {
   let updateConfigContent = '';
-  updateConfigContent += "currency="+updateCurrency.toLowerCase()+"\nnetworkIx="+updateNetworkIx+"\nnodeURL="+updateNodeURL+"\nwalletPath="+updateWalletPath+"\nshowBalance="+updateShowBalance+"\nadvancedFeatures="+updateAdvancedFeatures;
+  updateConfigContent += "currency="+updateCurrency.toLowerCase()
+  updateConfigContent += "\nnetworkIx="+updateNetworkIx
+  updateConfigContent += "\nnodeURL="+updateNodeURL
+  updateConfigContent += "\nwalletPath="+updateWalletPath
+  updateConfigContent += "\nshowBalance="+updateShowBalance
+  updateConfigContent += "\nadvancedFeatures="+updateAdvancedFeatures;  
+  updateConfigContent += "\nlastWallet="+lastWallet;
   if (developMode) updateConfigContent +="\ndevelopMode="+developMode;
+  
   fs.writeFile(configFilePath, updateConfigContent, "utf8", (err) => {
   if (err) throw err;
     bannerStatus = `Configuration file was saved successfully.`;
@@ -2726,6 +2755,10 @@ const getTXDetails = (_txID) => {
   return txDetail;
 }
 
+const getLastWallet = () => {
+  return lastWallet;
+}
+
 /* basic */
 exports.REST_SERVICES = REST_SERVICES;
 exports.init = init;
@@ -2784,7 +2817,6 @@ exports.getGeneratedPrivateKeyHex = getGeneratedPrivateKeyHex;
 exports.copyPrivateKeyToClipboard = copyPrivateKeyToClipboard;
 exports.copyAddressToClipboard = copyAddressToClipboard;
 /* Producers & Candidates */
-//exports.setRefreshCandiatesFlag = setRefreshCandiatesFlag;
 exports.reloadProducersAndVotes = reloadProducersAndVotes;
 exports.requestListOfProducers = requestListOfProducers;
 exports.requestListOfCandidateVotes = requestListOfCandidateVotes;
@@ -2869,3 +2901,5 @@ exports.getJson = getJson;
 exports.parseCurrencyList = parseCurrencyList;
 exports.getParsedFiatList = getParsedFiatList;
 exports.getParsedCryptoList = getParsedCryptoList;
+exports.getLastWallet = getLastWallet;
+exports.getVoteValue = getVoteValue;

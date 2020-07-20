@@ -16,12 +16,14 @@ const SocialMedia = require('./partial/social-media.jsx');
 
 let showPasswordModal = false;
 let showPasswordToggle = false;
+let listenerFunction;
 
 module.exports = (props) => {
   const App = props.App;
   const openDevTools = props.openDevTools;
   const Version = props.Version;
   const GuiToggles = props.GuiToggles;
+  const GuiUtils = props.GuiUtils;
   const onLinkClick = props.onLinkClick;
   const isLedgerConnected = App.isLedgerConnected();
 
@@ -45,21 +47,25 @@ module.exports = (props) => {
   const sendVote = () => {
     let isSent = App.sendVoteTx();
     if (isSent) {
-      showPasswordModal = false;
+      closeModal();
     } else {
-      showPasswordModal = false;
+      App.renderApp();
     }
-    App.renderApp();
   }
   
   const showVoteModal = () => {
     showPasswordModal = true;
+    GuiUtils.setFocus('votePassword');
+    window.addEventListener('keyup', listenerFunction);
     App.renderApp();
   }
   
   const closeModal = () => {
-    showPasswordModal = false;
-    App.renderApp();    
+    if (showPasswordModal) {
+      showPasswordModal = false;
+      window.removeEventListener('keyup', listenerFunction);
+      App.renderApp();
+    }
   }
   
   const showPassword = () => {
@@ -70,6 +76,10 @@ module.exports = (props) => {
     }
     App.renderApp();    
   }
+  
+  window.addEventListener('load', (event) => {
+    listenerFunction = GuiToggles.modalESCListener.bind(null, {closeModal});
+  });
 
   return (
     <div id="voting" className="gridback-voting w1125h750px">
@@ -149,6 +159,8 @@ module.exports = (props) => {
 
       <div className="voting-row4">
         <p className="display_inline_block active-heading">Active Votes</p>
+        <p className="display_inline_block vote-status status-font">Status: {App.getCandidateVoteListStatus()} </p>
+        <p className="display_inline_block status-font">Power: {App.getVoteValue()} </p>
         <p className="display_inline_block status-font">Voted {App.getParsedCandidateVoteList().candidateVotes.length}/36</p>
       </div>
 
@@ -158,7 +170,7 @@ module.exports = (props) => {
             <tr className="txtable-headrow">
               <td className="no_border no_padding">#</td>
               <td className="no_border no_padding">Nickname</td>
-              <td className="no_border no_padding">Votes</td>
+              <td className="no_border no_padding">Voting power</td>
               <td className="no_border no_padding">State</td>
             </tr>
             {
@@ -185,6 +197,7 @@ module.exports = (props) => {
       </div>
       
       <div className="bg-modal w400px h200px" style={showPasswordModal ? {display: 'flex'} : {display: 'none'}}>
+        <a onClick={(e) => closeModal()}></a>
         <div className="modalContent w350px h180px">
           <div className="closeModal" onClick={(e) => closeModal()}>
             <img className="scale-hover" src="artwork/voting-back.svg" height="38px" width="38px"/>
@@ -203,5 +216,5 @@ module.exports = (props) => {
       </div>
       
     </div>
-    );
-    }
+  );
+}

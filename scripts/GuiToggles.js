@@ -6,7 +6,7 @@ const GuiUtils = require('./GuiUtils.js');
 let app;
 let bannerID;
 let bannerTimeout = 10000;
-
+let page = '';
 
 const init = (_app) => {
   app = _app;
@@ -45,28 +45,31 @@ const hideAllMenus = () => {
 };
 
 const showLanding = () => {
+  page = 'landing';
   hideEverything();
   app.clearSendData();
   app.clearGlobalData();
   app.requestBlockchainData(false);
-  show('landing');
-  show('landingMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
 };
 
 const showImport = () => {
+  page = 'import';
   hideEverything();
   //app.clearSendData();
-  show('import');
-  show('importMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
 };
 
 const showHome = () => {
+  page = 'home';
   //app.setRefreshCandiatesFlag(true);
   hideEverything();
   //app.clearSendData();
   app.reloadProducersAndVotes(false);
-  show('home');
-  show('homeMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
   show('version');
 };
 
@@ -85,23 +88,26 @@ const hideMenu = (name) => {
 };
 
 const showVoting = () => {
+  page = 'voting';
   //app.setRefreshCandiatesFlag(false);
   hideEverything();
   //app.clearSendData();
-  show('voting');
-  show('votingMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
 };
 
 const showQRCode = () => {
+  page = 'qrcode';
   hideEverything();
   //app.clearSendData();
-  show('qrcode');
+  show(page);
 };
 
 const showSettings = () => {
+  page = 'settings';
   hideEverything();
   //app.clearSendData();
-  show('settings');
+  show(page);
 };
 
 const showBanner = (name) => {
@@ -116,23 +122,25 @@ const hideBanner = (name) => {
 };
 
 const showCreate = () => {
+  page = 'create';
   hideEverything();
   app.clearGlobalData();
   app.generateMnemonic();
-  show('create');
-  show('createMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
 };
 
 const showExportMnemonic = () => {
+  page = 'create';
   hideEverything();
-  show('create');
-  show('createMenuOpen');
+  show(page);
+  show(page+'MenuOpen');
 };
 
 const showAllBanners = (timeout) => {
   clearTimeout(bannerID);
   if (timeout === true) {
-  bannerID = setTimeout(() => hideAllBanners(), bannerTimeout);
+    bannerID = setTimeout(() => hideAllBanners(), bannerTimeout);
   }
   GuiUtils.show('landingBanner');
   GuiUtils.show('homeBanner');
@@ -153,6 +161,18 @@ const hideAllBanners = () => {
   GuiUtils.hide('settingsBanner');
 };
 
+const modalESCListener = (props, event) => {
+  const closeModal = props.closeModal;
+  if (event.keyCode === 27) {
+    //console.log("ESC pressed modalESCListener");
+    closeModal();
+  }
+}
+
+const getPage = () => {
+  return page;
+}
+
 exports.init = init;
 exports.showLanding = showLanding;
 exports.showImport = showImport;
@@ -169,3 +189,5 @@ exports.showExportMnemonic = showExportMnemonic;
 exports.showAllBanners = showAllBanners;
 exports.hideAllBanners = hideAllBanners;
 exports.bannerID = bannerID;
+exports.modalESCListener = modalESCListener;
+exports.getPage = getPage;

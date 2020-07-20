@@ -27,12 +27,14 @@ let txDetail = '';
 let txModalTop = 0;
 let autoFocus = 0;
 let modalTitle = '';
+let listenerFunction;
 
 module.exports = (props) => {
   const App = props.App;
   const openDevTools = props.openDevTools;
   const Version = props.Version;
   const GuiToggles = props.GuiToggles;
+  const GuiUtils = props.GuiUtils;
   const onLinkClick = props.onLinkClick;
   const isLedgerConnected = App.isLedgerConnected();
   consolidesCount = Math.ceil(Number(App.getTotalUTXOs())/Number(App.getMaxUTXOsPerTX()));
@@ -58,7 +60,7 @@ module.exports = (props) => {
 
   const showConfirmAndSeeFees = () => {
     //App.log('STARTED showConfirmAndSeeFees')
-    const isValid = App.validateInputs();
+    let isValid = App.validateInputs();
     if (isValid) {
       App.setSendStep(2);
     }
@@ -74,17 +76,19 @@ module.exports = (props) => {
   const sendAmountToAddress = () => {
     let isSent = App.sendAmountToAddress();
     if (isSent) {
-      showPasswordModal = false;
+      closeModal();
+    } else {
+      App.renderApp();
     }
-    App.renderApp();
   }
   
   const consolidateUTXOs = () => {
     isSent = App.consolidateUTXOs();
     if (isSent) {
-      showPasswordModal = false;
+      closeModal();
+    } else {
+      App.renderApp();
     }
-    App.renderApp();
   }
 
   const SendScreen = (props) => {
@@ -108,20 +112,30 @@ module.exports = (props) => {
     showPasswordModal = true;
     sendTxType = true;
     consolidateTxType = false;
+    GuiUtils.setFocus('sendPassword');
+    window.addEventListener('keyup', listenerFunction);
     App.renderApp();
   }
   
   const showConsolidateModal = () => {
-    modalTitle = "Consolidate wallet ("+App.getWalletNameLogin()+")";
-    showPasswordModal = true;
-    sendTxType = false;
-    consolidateTxType = true;
-    App.renderApp();
+    let isValid = App.checkTransactionHistory();
+    if (isValid) {
+      modalTitle = "Consolidate wallet ("+App.getWalletNameLogin()+")";
+      showPasswordModal = true;
+      sendTxType = false;
+      consolidateTxType = true;
+      GuiUtils.setFocus('sendPassword');
+      window.addEventListener('keyup', listenerFunction);
+      App.renderApp();
+    }
   }
   
   const closeModal = () => {
-    showPasswordModal = false;
-    App.renderApp();    
+    if (showPasswordModal) {
+      showPasswordModal = false;
+      window.removeEventListener('keyup', listenerFunction);
+      App.renderApp();
+    }
   }
   
   const showPassword = () => {
@@ -168,6 +182,10 @@ module.exports = (props) => {
       retrieveCryptoName();
     }
   }
+  
+  window.addEventListener('load', (event) => {
+    listenerFunction = GuiToggles.modalESCListener.bind(null, {closeModal});
+  });
   
   const SendScreenOne = (props) => {
     const visibility = props.visibility;
@@ -378,6 +396,7 @@ module.exports = (props) => {
     </div>
     
     <div className="bg-modal w400px h200px" style={showPasswordModal ? {display: 'flex'} : {display: 'none'}}>
+      <a onClick={(e) => closeModal()}></a>
       <div className="modalContent w350px h180px">
         <div className="closeModal" onClick={(e) => closeModal()}>
           <img className="scale-hover" src="artwork/voting-back.svg" height="38px" width="38px"/>
