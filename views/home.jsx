@@ -259,7 +259,7 @@ module.exports = (props) => {
     <div className="logo-info">
       <Branding/>
       <header>
-        <img src="artwork/refreshicon.svg" className="refresh-icon" title="Refresh Blockchain Data1" onClick={(e) => App.requestBlockchainData(true)} />
+        <img src="artwork/refreshicon.svg" className="refresh-icon" title="Refresh" onClick={(e) => App.requestBlockchainData(true)} />
         <nav id="homeMenuOpen" title="Menu" onClick={(e) => showMenu()}>
           <img src="artwork/nav.svg" className="nav-icon dark-hover" onClick={(e) => showMenu()}/>
         </nav>
