@@ -23,7 +23,7 @@ module.exports = (props) => {
       <a onClick={(e) => closeModal()}></a>
       <div className="modalContent w550px h350px">
         <div className="utxo-title">
-          <span className="address-text font_size20 gradient-font">UTXOs Control</span>
+          <span className="address-text font_size20 gradient-font">UTXO Control</span>
         </div>
         <div className="utxo-selection status-font">{App.getSelectedUTXOs().length}/{App.getMaxUTXOsPerTX()}</div>
         <div className="closeModal" onClick={(e) => closeModal()}>
