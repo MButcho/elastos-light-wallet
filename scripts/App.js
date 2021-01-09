@@ -2950,13 +2950,13 @@ const validateUTXOsSelection = () => {
     return false;
   }
   
-   if (selectedUTXOs.length === 0) {
+  /*if (selectedUTXOs.length === 0) {
     bannerStatus = 'You have not selected any UTXOs, please select at least 1.';
     bannerClass = 'bg_red color_white banner-look';
     GuiToggles.showAllBanners(false);
     renderApp();
     return false;
-  }
+  }*/
   return true;
 }
   

@@ -93,12 +93,11 @@ module.exports = (props) => {
     let isValid = App.validateUTXOsSelection();
     if (isValid) {
       closeModal();
-      App.setCustomUTXOs(true);
-      /*if (App.getPasswordFlag()) {
-        showVoteModal();
+      if (App.getSelectedUTXOs().length > 0) {
+        App.setCustomUTXOs(true);
       } else {
-        sendVote();
-      }*/
+        App.setCustomUTXOs(false);
+      }
     }    
   }
   
@@ -181,7 +180,7 @@ module.exports = (props) => {
       <div className="voting-row3">
         <button className='votingselect-button scale-hover' title="Select previous voting list" onClick={() => App.selectActiveVotes()} >Select Previous</button>
         <button className='votingselect-button marginright_auto scale-hover' title='Clear Selection' onClick={() => App.clearSelection()}>Clear Selection</button>
-        <div style={App.getCustomUTXOs() ? {display: 'block'} : {display: 'none'}} className="utxo-custom-text-voting utxo-custom-text" title="Update selected UTXOs by CTRL+u or CMD+u">Selected UTXOs ({App.getSelectedUTXOs().length}/{App.getTotalUTXOs()})</div>
+        <button style={(App.getCurrentAdvancedFeatures() || App.getCustomUTXOs()) ? {display: 'block'} : {display: 'none'}} className={App.getCustomUTXOs() ? "utxo-control-button utxo-custom-text-voting utxo-custom-text dark-hover cursor_def" : "utxo-control-button utxo-custom-text-voting utxo-custom-text-grey dark-hover cursor_def"} title="Update selected UTXOs by CTRL+u or CMD+u" onClick={(e) => UTXOSelection()}>UTXO Control ({App.getCustomUTXOs() ? App.getSelectedUTXOs().length+"/"+App.getTotalUTXOs() : "ALL"} selected)</button>
         <button onClick={App.getPasswordFlag() ? (e) => showVoteModal() : (e) => sendVote()} className="scale-hover voting-button">Vote</button>
       </div>
 
