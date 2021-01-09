@@ -2921,7 +2921,7 @@ const getMaxCandidates = () => {
   return maxCandidates;
 }
 
-const toggleUTXOSelection = (_item) => {
+const toggleUTXOControl = (_item) => {
   const selectUTXO = parsedUnspentTransactionOutputs[_item.index];
   if (!checkUTXO(selectUTXO.utxoIx)) {
     //console.log(JSON.stringify(selectUTXO));
@@ -2933,7 +2933,7 @@ const toggleUTXOSelection = (_item) => {
       }
     }
   }
-  // mainConsole.log('toggleUTXOSelection selectedUTXOs, count', selectedUTXOs, selectedUTXOs.length);
+  // mainConsole.log('toggleUTXOControl selectedUTXOs, count', selectedUTXOs, selectedUTXOs.length);
   renderApp();
 };
 
@@ -3140,7 +3140,7 @@ exports.getVoteValue = getVoteValue;
 exports.getMaxCandidates = getMaxCandidates;
 exports.enableContextMenu = enableContextMenu;
 exports.disableContextMenu = disableContextMenu;
-exports.toggleUTXOSelection = toggleUTXOSelection;
+exports.toggleUTXOControl = toggleUTXOControl;
 exports.getAllUTXOs = getAllUTXOs;
 exports.getSelectedUTXOs = getSelectedUTXOs;
 exports.checkUTXO = checkUTXO;

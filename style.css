@@ -975,10 +975,22 @@ button {
   width: 93%;
 }
 
-.utxo-selection {
+.utxo-status {
   position: absolute;
   top: 31px;
   left: 478px;
+}
+
+.utxo-status-font {
+  opacity: 0.9;
+  font-size: 16px;
+  color: #B2B4C3;
+  letter-spacing: 0;
+  line-height: 17px;
+}
+
+.utxo-status-font-max {
+  font-size: 11px;
 }
 
 .utxo-tablediv {

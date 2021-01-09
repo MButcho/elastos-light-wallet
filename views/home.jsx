@@ -165,12 +165,12 @@ module.exports = (props) => {
     App.renderApp();
   }
   
-  const UTXOSelection = () => {
+  const UTXOControl = () => {
     showUTXOs = true;
     App.renderApp();
   }
   
-  const UTXOSelectionNext = () => {
+  const UTXOControlNext = () => {
     let isValid = App.validateUTXOsSelection();
     if (isValid) {
       closeModal();
@@ -201,7 +201,7 @@ module.exports = (props) => {
   module.exports.closeModal = closeModal;
   module.exports.resetPage = resetPage;
   module.exports.cancelSend = cancelSend;
-  module.exports.UTXOSelection = UTXOSelection;
+  module.exports.UTXOControl = UTXOControl;
   
   const SendScreenOne = (props) => {
     const visibility = props.visibility;
@@ -411,9 +411,9 @@ module.exports = (props) => {
       </div>
     </div>
     
-    <button tabIndex="6" style={(App.getCurrentAdvancedFeatures() || App.getCustomUTXOs()) ? {display: 'block'} : {display: 'none'}} className={App.getCustomUTXOs() ? "utxo-control-button utxo-custom-text-home utxo-custom-text dark-hover cursor_def" : "utxo-control-button utxo-custom-text-home utxo-custom-text-grey dark-hover cursor_def"} title="Update selected UTXOs by CTRL+u or CMD+u" onClick={(e) => UTXOSelection()}>UTXO Control ({App.getCustomUTXOs() ? App.getSelectedUTXOs().length+"/"+App.getTotalUTXOs() : "ALL"} selected)</button>
+    <button tabIndex="6" style={(App.getCurrentAdvancedFeatures() || App.getCustomUTXOs()) ? {display: 'block'} : {display: 'none'}} className={App.getCustomUTXOs() ? "utxo-control-button utxo-custom-text-home utxo-custom-text dark-hover cursor_def" : "utxo-control-button utxo-custom-text-home utxo-custom-text-grey dark-hover cursor_def"} title="Update selected UTXOs by CTRL+u or CMD+u" onClick={(e) => UTXOControl()}>UTXO Control ({App.getCustomUTXOs() ? App.getSelectedUTXOs().length+"/"+App.getTotalUTXOs() : "ALL"} selected)</button>
     {/*<div style={App.getCustomUTXOs() ? {display: 'block'} : {display: 'none'}} className="utxo-custom-text-home utxo-custom-text" title="Update selected UTXOs by CTRL+u or CMD+u"></div>*/}
-    <UTXOsSelection App={App} showUTXOs={showUTXOs} closeModal={closeModal} UTXOSelection={UTXOSelection} UTXOSelectionNext={UTXOSelectionNext}/>
+    <UTXOsSelection App={App} showUTXOs={showUTXOs} closeModal={closeModal} UTXOControl={UTXOControl} UTXOControlNext={UTXOControlNext}/>
     
     <div className="bg-modal w400px h200px" style={showPasswordModal ? {display: 'flex'} : {display: 'none'}}>
       <a onClick={(e) => closeModal()}></a>
