@@ -45,7 +45,6 @@ module.exports = (props) => {
       clearPasswordFields();
       closeModal();      
     }
-    App.clearUTXOsSelection();
     App.renderApp();
   }
   

@@ -173,6 +173,7 @@ let unspentTransactionOutputsStatus = 'No UTXOs Requested Yet';
 const parsedUnspentTransactionOutputs = [];
 let selectedUTXOs = [];
 let customUTXOs = false;
+let balanceChange = false;
 
 let blockchainStatus = 'No Blockchain State Requested Yet';
 
@@ -583,6 +584,7 @@ const getUnspentTransactionOutputsReadyCallback = (response) => {
       parsedUnspentTransactionOutputs.push(utxo);
     });
   }
+  
   renderApp();
 };
 
@@ -605,7 +607,6 @@ const requestBlockchainData = (_userRequest) => {
   requestBalance();
   requestUnspentTransactionOutputs();
   requestBlockchainState();
-  clearUTXOsSelection();
   
   CoinGecko.requestPriceData();
   
@@ -935,6 +936,7 @@ const sendAmountToAddressReadyCallback = (transactionJson) => {
     requestTransactionHistory();
     GuiToggles.showAllBanners(true);
     clearSendData();
+    clearUTXOsSelection();
     setSendStep(1);
   }
   renderApp();
@@ -1705,6 +1707,7 @@ const sendVoteReadyCallback = (transactionJson) => {
     requestTransactionHistory();
     GuiToggles.showAllBanners(true);
     clearSendData();
+    clearUTXOsSelection();
   }  
   renderApp();
 };
@@ -1829,9 +1832,18 @@ const getBalanceErrorCallback = (response) => {
 };
 
 const getBalanceReadyCallback = (balanceResponse) => {
+  let lastBalance = balance;
   if (balanceResponse.Error == 0) {
     balanceStatus = `Balance Received.`;
     balance = balanceResponse.Result;
+    if (lastBalance !== balance) {
+      balanceChange = true;
+      if (customUTXOs) {
+        clearUTXOsSelection();
+      }
+    } else {
+      balanceChange = false;
+    }
   } else {
     //balanceStatus = `Balance Received Error:${balanceResponse.Error}`;
     balanceStatus = `Error receiving balance`;
