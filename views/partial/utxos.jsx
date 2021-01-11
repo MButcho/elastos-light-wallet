@@ -2,7 +2,7 @@ const React = require('react');
 
 let showUTXOs = '';
 let sort = "index";
-let direction = "up";
+let direction = "asc";
 
 module.exports = (props) => {
   const App = props.App;
@@ -22,14 +22,16 @@ module.exports = (props) => {
   
   const sortIndex = () => {
     sort = "index";
-    /*if (direction === "up") {direction = "down"}
-    else {direction = "up"}*/  
+    if (direction === "asc") {direction = "desc"}
+    else {direction = "asc"}  
     App.renderApp();
-    console.log("Sort index ->");
+    console.log("Sort index ->", direction);
   }
   
   const sortValue = () => {
     sort = "value";
+    if (direction === "asc") {direction = "desc"}
+    else {direction = "asc"}  
     App.renderApp();
     console.log("Sort value ->");
   }
@@ -56,7 +58,7 @@ module.exports = (props) => {
               </tr>
               {
                 App.getAllUTXOs().slice(0, App.getAllUTXOs().count).sort(sort === "index" ? ({utxoIx: previousutxoIx}, {utxoIx: currentutxoIx}) => previousutxoIx - currentutxoIx : ({Value: previousValue}, {Value: currentValue}) => currentValue - previousValue).map((item, index) => {
-                  return (<tr className={App.checkUTXO(item.utxoIx) ? 'txtable-row voting-selected ': 'txtable-row voting-hover'} key={index} onClick={(e) => App.toggleUTXOControl({item})}>
+                  return (<tr className={App.checkUTXO(item.utxoIx) ? 'txtable-row voting-selected ': 'txtable-row voting-hover'} key={index} onClick={(e) => App.toggleUTXOControl(item.utxoIx)}>
                     <td>{item.utxoIx}</td>
                     <td>{item.Txid.substring(0, 15) + '...'}</td>
                     <td>{item.Value}</td>

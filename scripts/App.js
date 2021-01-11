@@ -2921,8 +2921,8 @@ const getMaxCandidates = () => {
   return maxCandidates;
 }
 
-const toggleUTXOControl = (_item) => {
-  const selectUTXO = parsedUnspentTransactionOutputs[_item.item.utxoIx];
+const toggleUTXOControl = (_utxoIx) => {
+  const selectUTXO = parsedUnspentTransactionOutputs[_utxoIx];
   if (!checkUTXO(selectUTXO.utxoIx)) {
     //console.log(JSON.stringify(selectUTXO));
     selectedUTXOs.push(selectUTXO);
