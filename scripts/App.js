@@ -2922,7 +2922,7 @@ const getMaxCandidates = () => {
 }
 
 const toggleUTXOControl = (_item) => {
-  const selectUTXO = parsedUnspentTransactionOutputs[_item.index];
+  const selectUTXO = parsedUnspentTransactionOutputs[_item.item.utxoIx];
   if (!checkUTXO(selectUTXO.utxoIx)) {
     //console.log(JSON.stringify(selectUTXO));
     selectedUTXOs.push(selectUTXO);
