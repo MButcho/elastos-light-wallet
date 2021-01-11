@@ -21,19 +21,25 @@ module.exports = (props) => {
   }
   
   const sortIndex = () => {
-    if (sort === "value") direction = "desc" // default for value
+    if (sort === "value") {
+      direction = "asc" // default for Index
+    } else {
+      if (direction === "asc") {direction = "desc"}
+      else {direction = "asc"}        
+    }
     sort = "index";
-    if (direction === "asc") {direction = "desc"}
-    else {direction = "asc"}  
     App.renderApp();
     //console.log("Sort index", direction);
   }
   
   const sortValue = () => {
-    if (sort === "index") direction = "asc" // default for value
+    if (sort === "index") {
+      direction = "desc" // default for Value
+    } else {
+      if (direction === "asc") {direction = "desc"}
+      else {direction = "asc"}  
+    }
     sort = "value";
-    if (direction === "asc") {direction = "desc"}
-    else {direction = "asc"}  
     App.renderApp();
     //console.log("Sort value", direction);
   }
@@ -59,7 +65,7 @@ module.exports = (props) => {
                 <td className="w50px">Select</td>
               </tr>
               {
-                App.getAllUTXOs().slice(0, App.getAllUTXOs().count).sort(sort === "index" ? direction === "asc" ? ({utxoIx: previousutxoIx}, {utxoIx: currentutxoIx}) => previousutxoIx - currentutxoIx : ({utxoIx: previousutxoIx}, {utxoIx: currentutxoIx}) => currentutxoIx - previousutxoIx : direction === "asc" ? ({Value: previousValue}, {Value: currentValue}) => previousValue - currentValue : ({Value: previousValue}, {Value: currentValue}) => currentValue - previousValue).map((item, index) => {
+                App.getAllUTXOs().slice(0, App.getAllUTXOs().count).sort(sort === "index" ? (({utxoIx: previousutxoIx}, {utxoIx: currentutxoIx}) => direction === "asc" ? previousutxoIx - currentutxoIx : currentutxoIx - previousutxoIx) : (({Value: previousValue}, {Value: currentValue}) => direction === "asc" ? previousValue - currentValue : currentValue - previousValue)).map((item, index) => {
                   return (<tr className={App.checkUTXO(item.utxoIx) ? 'txtable-row voting-selected ': 'txtable-row voting-hover'} key={index} onClick={(e) => App.toggleUTXOControl(item.utxoIx)}>
                     <td>{item.utxoIx}</td>
                     <td>{item.Txid.substring(0, 15) + '...'}</td>
