@@ -59,9 +59,9 @@ module.exports = (props) => {
           <table className="utxo-table">
             <tbody>
               <tr className="txtable-headrow">
-                <td className="w100px cursor_def" onClick={() => sortIndex()}>Index</td>
+                <td className="w100px cursor_def" onClick={() => sortIndex()}>Index<span style={sort === "index" ? {display: 'inline-block'} : {display: 'none'}} className={direction === "asc" ? "sort-arrow down" : "sort-arrow up"}></span></td>
                 <td className="w175px">Tx ID</td>
-                <td className="w175px cursor_def" onClick={() => sortValue()}>Value</td>
+                <td className="w175px cursor_def" onClick={() => sortValue()}>Value<span style={sort === "value" ? {display: 'inline-block'} : {display: 'none'}} className={direction === "asc" ? "sort-arrow down" : "sort-arrow up"}></span></td>
                 <td className="w50px">Select</td>
               </tr>
               {
@@ -81,7 +81,7 @@ module.exports = (props) => {
         </div>
         <div className="utxo-footer">
           <button className='utxo-clear utxo-grey-button scale-hover' title='Clear Selection' onClick={() => App.clearUTXOsSelection()}>Clear Selection</button>
-          <button className='utxo-max-select utxo-grey-button scale-hover' title='Select Max UTXOs' onClick={() => App.selectMaxUTXOs()}>Select Max</button>
+          <button className='utxo-max-select utxo-grey-button scale-hover' title='Select Max UTXOs' onClick={() => App.selectMaxUTXOs(sort, direction)}>Select Max</button>
           <button className="utxo-confirm submitModal scale-hover" onClick={() => UTXOControlNext()}>Save</button>
         </div>
       </div>
