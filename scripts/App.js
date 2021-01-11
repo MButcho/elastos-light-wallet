@@ -95,7 +95,7 @@ const REST_SERVICES = [{
   },
 ];
 
-const LEDGER_UTXO_CONSOLIDATE_COUNT = 5; // Ledger: Starting UTXOs count to get TX size from
+const LEDGER_UTXO_CONSOLIDATE_COUNT = 20; // Ledger: Starting UTXOs count to get TX size from
 const MAX_UTXO_CONSOLIDATE_COUNT = 500; // Non-Ledger: Limit to 500 UTXOs by Elastos blockchain
 
 /** global variables */
