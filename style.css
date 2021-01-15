@@ -302,13 +302,20 @@ button {
 
 .currency-balance {
   position: absolute;
+  width: 270px;
+  overflow: hidden;
   font-size: 51px;
   color: #FFFFFF;
+  text-align: left;
   letter-spacing: 0;
   top: 234px;
   left: 82px;
   margin: 0;
   font-weight: 600;
+}
+
+.font_size_45px {
+  font-size: 45px;
 }
 
 .currency-balance-hidden {

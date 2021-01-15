@@ -21,7 +21,7 @@ module.exports = (props) => {
       <img title={!showBalance ? "Show balance" : "Hide balance"} className={!showBalance ? "balanceEye eyeOn" : "balanceEye eyeOff"} onClick={(e) => balanceVisibility()}/>
     <p className="balance">balance</p>
         <p className="currency-head">{App.getCurrentCurrency().toUpperCase()}</p>
-        <p className={showBalance ? "currency-balance" : "currency-balance-hidden"}>{showBalance ? App.getCurrencyBalance() : "*****"}</p>
+        <p className={showBalance ? (App.getCurrencyBalance() < 100000 ? "currency-balance" : "currency-balance font_size_45px") : "currency-balance-hidden"}>{showBalance ? App.getCurrencyBalance() : "*****"}</p>
         <p className="ela-balance gradient-font">{showBalance ? App.getELABalance() : <span className="ela-balance-hidden">*****</span>} ELA</p>
       </div>
 
