@@ -953,7 +953,7 @@ const clearSendData = () => {
   GuiUtils.setValue('sendToAddress', '');
   cryptoNameELAAddress = '';
   GuiUtils.setValue('feeAmount', feeRequested);
-  //GuiUtils.setValue('txMemo', '');
+  GuiUtils.setValue('txMemo', '');
   GuiUtils.setValue('sendPassword', '');
   GuiUtils.setValue('votePassword', '');
   sendAmount = '';
@@ -1003,7 +1003,7 @@ const validateInputs = () => {
   sendAmount = GuiUtils.getValue('sendAmount').replace(/,/g, '.');  
   feeAmountSats = GuiUtils.getValue('feeAmount');
   feeRequested = feeAmountSats;
-  //txMemo = GuiUtils.getValue('txMemo');
+  txMemo = GuiUtils.getValue('txMemo');
   
   const isValidHistory = checkTransactionHistory();
   if (!isValidHistory) {
@@ -1130,7 +1130,7 @@ const consolidateUTXOs = () => {
     }
     
     let encodedTx;
-    const tx = TxFactory.createUnsignedSendToTx(unspentTransactionOutputs, getAddress() , maxAmountToSend, publicKey, feeAmountSats, feeAccount, false);
+    const tx = TxFactory.createUnsignedSendToTx(unspentTransactionOutputs, getAddress() , maxAmountToSend, publicKey, feeAmountSats, feeAccount, '', false);
     const encodedUnsignedTx = TxTranscoder.encodeTx(tx, false);
     
     if (Math.ceil(encodedUnsignedTx.length/2) > maxTXSize) {
@@ -1185,7 +1185,7 @@ const consolidateUTXOs = () => {
         }
           
         if (privateKey) {            
-          const encodedTx = TxFactory.createSignedSendToTx(privateKey, unspentTransactionOutputs, getAddress(), maxAmountToSend, feeAmountSats, feeAccount);
+          const encodedTx = TxFactory.createSignedSendToTx(privateKey, unspentTransactionOutputs, getAddress(), maxAmountToSend, feeAmountSats, feeAccount, '');
           if (encodedTx == undefined) {
             return false;
           }
@@ -1222,7 +1222,7 @@ const sendAmountToAddress = () => {
   let encodedTx;
 
   if (useLedgerFlag) {
-    const tx = TxFactory.createUnsignedSendToTx(unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, true);
+    const tx = TxFactory.createUnsignedSendToTx(unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo, true);
     const encodedUnsignedTx = TxTranscoder.encodeTx(tx, false);
     //console.log(Math.ceil(encodedUnsignedTx.length/2));
     showLedgerConfirmBanner(getTxByteLength(encodedUnsignedTx));
@@ -1270,7 +1270,7 @@ const sendAmountToAddress = () => {
     }
     
     if (privateKey) {
-      const encodedTx = TxFactory.createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount);
+      const encodedTx = TxFactory.createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount, txMemo);
         if (encodedTx == undefined) {
           return false;
         }
@@ -2224,7 +2224,7 @@ const writeSendData = () => {
   sendToAddress = GuiUtils.getValue('sendToAddress');
   sendAmount = GuiUtils.getValue('sendAmount').replace(/,/g, '.');  
   feeAmountSats = GuiUtils.getValue('feeAmount');
-  //txMemo = GuiUtils.getValue('txMemo');
+  txMemo = GuiUtils.getValue('txMemo');
   feeRequested = feeAmountSats;
 }
 
