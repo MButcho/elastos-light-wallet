@@ -220,7 +220,7 @@ module.exports = (props) => {
     <p className="elatext-send">ELA</p>
     <input tabIndex="3" type="text" size="5" maxLength={5} id="feeAmount" placeholder="Fees (SELA)" defaultValue={App.getFee()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 3 ? true : false}/>
     {/*<div className="fees-text">Fees (Satoshi ELA)</div>*/}
-    <input tabIndex="4" type="text" maxLength={64} id="txMemo" placeholder="Memo" className="memo-field" defaultValue={App.getTxMemo()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 4 ? true : false}/>
+    <input tabIndex="4" type="text" maxLength={128} id="txMemo" placeholder="Memo" className="memo-field" defaultValue={App.getTxMemo()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 4 ? true : false}/>
     <button tabIndex="5" className="next-button scale-hover" onClick={(e) => showConfirmAndSeeFees()}><p>Next</p></button>
     <button tabIndex="6" style={App.showConsolidateButton() ? {display: 'block'} : {display: 'none'}} className="consolidate-button dark-hover cursor_def" title={consolidateTitle} onClick={(App.getPasswordFlag()) ? (e) => showConsolidateModal() : (e) => consolidateUTXOs()}>Consolidate ({consolidesCount})<img src="artwork/arrow.svg" alt="" className="arrow-forward"/></button>
     </div>);

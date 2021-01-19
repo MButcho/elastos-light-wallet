@@ -104,7 +104,7 @@ const createUnsignedSendToTxSats = (unspentTransactionOutputs, sendToAddress, se
     if (txMemo !== undefined && txMemo !== "") {
       const txAttribute2 = {};
       txAttribute2.Usage = 0x81;
-      txAttribute2.Data = Buffer.from(txMemo, 'utf8').toString('hex');
+      txAttribute2.Data = Buffer.from("type:text,msg:"+txMemo, 'utf8').toString('hex');
       tx.TxAttributes.push(txAttribute2);
     }
   }
