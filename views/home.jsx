@@ -195,7 +195,7 @@ module.exports = (props) => {
         App.renderApp();
     }
   }
-  
+    
   module.exports.showPasswordModal = showPasswordModal;
   module.exports.showUTXOs = showUTXOs;
   module.exports.closeModal = closeModal;
@@ -218,10 +218,11 @@ module.exports = (props) => {
     </div>
     <hr className="ela-send_amount_line" />
     <p className="elatext-send">ELA</p>
-    <input tabIndex="3" type="text" size="5" maxLength={5} id="feeAmount" placeholder="Fees" defaultValue={App.getFee()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 3 ? true : false}/>
-    <div className="fees-text">Fees (in Satoshi ELA)</div>
-    <button tabIndex="4" className="next-button scale-hover" onClick={(e) => showConfirmAndSeeFees()}><p>Next</p></button>
-    <button tabIndex="5" style={App.showConsolidateButton() ? {display: 'block'} : {display: 'none'}} className="consolidate-button dark-hover cursor_def" title={consolidateTitle} onClick={(App.getPasswordFlag()) ? (e) => showConsolidateModal() : (e) => consolidateUTXOs()}>Consolidate ({consolidesCount})<img src="artwork/arrow.svg" alt="" className="arrow-forward"/></button>
+    <input tabIndex="3" type="text" size="5" maxLength={5} id="feeAmount" placeholder="Fees (SELA)" defaultValue={App.getFee()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 3 ? true : false}/>
+    <div className="fees-text">Fees (Satoshi ELA)</div>
+    {/*<input tabIndex="4" type="text" style="display: none;" maxLength={64} id="txMemo" placeholder="Memo" className="memo-field" defaultValue={App.getTxMemo()} onChange={(e) => writeSendData()} onFocus={(e) => autoFocusOn(e)} onBlur={(e) => autoFocusOff(e)} autoFocus={autoFocus === 4 ? true : false}/>*/}
+    <button tabIndex="5" className="next-button scale-hover" onClick={(e) => showConfirmAndSeeFees()}><p>Next</p></button>
+    <button tabIndex="6" style={App.showConsolidateButton() ? {display: 'block'} : {display: 'none'}} className="consolidate-button dark-hover cursor_def" title={consolidateTitle} onClick={(App.getPasswordFlag()) ? (e) => showConsolidateModal() : (e) => consolidateUTXOs()}>Consolidate ({consolidesCount})<img src="artwork/arrow.svg" alt="" className="arrow-forward"/></button>
     </div>);
   }
 
@@ -232,8 +233,8 @@ module.exports = (props) => {
         <img src="artwork/sendicon.svg" className="send-icon" title="Refresh Blockchain Data" onClick={(e) => App.requestBlockchainData(true)}/>
         <p className="send-text">Send</p>
         <p className="confirm-send-address-label">Receiving Address</p>
-        <p className="confirm-send address"><span>{App.getSendToAddress()}</span></p>        
-        <p className="confirm-send total">Total spending amount with fees is <span>{App.getTotalSpendingELA()} ELA</span></p>
+        <p className="confirm-send address"><span>{App.getSendToAddress()}</span></p>
+        <p className="confirm-send total">Total spending amount with fees is <span>{App.getTotalSpendingELA()} ELA</span>{App.getTxMemo() !== '' ? " and memo " : ""}<span>{App.getTxMemo() !== '' ? App.getTxMemo() : ""}</span></p>
         <button className="send-back dark-hover cursor_def" onClick={(e) => cancelSend()}><img src="artwork/arrow.svg" alt="" className="rotate_180 arrow-back" /><span className="send-back-text">Back</span></button>        
         <button className="sendela-button scale-hover" onClick={(App.getPasswordFlag()) ? (e) => showSendModal() : (e) => sendAmountToAddress()}><p>Send ELA</p></button>        
       </div>
@@ -365,8 +366,7 @@ module.exports = (props) => {
       <button className="requestsButtons padding_5px display_inline dark-hover br10 cursor_def m15L" onClick={(e) => App.clearRequests()}>Clear requests</button>
     </div>
     
-    <button tabIndex="6" style={(App.getCurrentAdvancedFeatures() || App.getCustomUTXOs()) ? {display: 'block'} : {display: 'none'}} className={App.getCustomUTXOs() ? "utxo-control-button utxo-custom-text-home utxo-custom-text dark-hover cursor_def" : "utxo-control-button utxo-custom-text-home utxo-custom-text-grey dark-hover cursor_def"} title="Update selected UTXOs by CTRL+u or CMD+u" onClick={(e) => UTXOControl()}>UTXO Control ({App.getCustomUTXOs() ? App.getSelectedUTXOs().length+"/"+App.getTotalUTXOs() : "ALL"} selected)</button>
-    {/*<div style={App.getCustomUTXOs() ? {display: 'block'} : {display: 'none'}} className="utxo-custom-text-home utxo-custom-text" title="Update selected UTXOs by CTRL+u or CMD+u"></div>*/}
+    <button tabIndex="7" style={(App.getCurrentAdvancedFeatures() || App.getCustomUTXOs()) ? {display: 'block'} : {display: 'none'}} className={App.getCustomUTXOs() ? "utxo-control-button utxo-custom-text-home utxo-custom-text dark-hover cursor_def" : "utxo-control-button utxo-custom-text-home utxo-custom-text-grey dark-hover cursor_def"} title="Update selected UTXOs by CTRL+u or CMD+u" onClick={(e) => UTXOControl()}>UTXO Control ({App.getCustomUTXOs() ? App.getSelectedUTXOs().length+"/"+App.getTotalUTXOs() : "ALL"} selected)</button>
     <UTXOsSelection App={App} showUTXOs={showUTXOs} closeModal={closeModal} UTXOControl={UTXOControl} UTXOControlNext={UTXOControlNext}/>
     
     <div id="txModal" style={showTxDetails ? {display: 'block', top: txModalTop} : {display: 'none', top: txModalTop}} className="txModal">

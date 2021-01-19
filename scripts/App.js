@@ -119,6 +119,8 @@ let feeAmountEla = '';
 
 let sendToAddress = '';
 
+let txMemo = '';
+
 let sendStep = 1;
 
 let isLoggedIn = false;
@@ -951,6 +953,7 @@ const clearSendData = () => {
   GuiUtils.setValue('sendToAddress', '');
   cryptoNameELAAddress = '';
   GuiUtils.setValue('feeAmount', feeRequested);
+  //GuiUtils.setValue('txMemo', '');
   GuiUtils.setValue('sendPassword', '');
   GuiUtils.setValue('votePassword', '');
   sendAmount = '';
@@ -959,6 +962,7 @@ const clearSendData = () => {
   sendToAddressStatuses.length = 0;
   sendToAddressLinks.length = 0;
   sendToAddress = '';
+  txMemo = '';
   setSendStep(1);
   //requestFee();
   //mainConsole.log('SUCCESS clearSendData');
@@ -999,6 +1003,7 @@ const validateInputs = () => {
   sendAmount = GuiUtils.getValue('sendAmount').replace(/,/g, '.');  
   feeAmountSats = GuiUtils.getValue('feeAmount');
   feeRequested = feeAmountSats;
+  //txMemo = GuiUtils.getValue('txMemo');
   
   const isValidHistory = checkTransactionHistory();
   if (!isValidHistory) {
@@ -2211,10 +2216,15 @@ const getFeeAmountSats = () => {
   return feeAmountSats;
 };
 
+const getTxMemo = () => {
+  return txMemo;
+};
+
 const writeSendData = () => {
   sendToAddress = GuiUtils.getValue('sendToAddress');
   sendAmount = GuiUtils.getValue('sendAmount').replace(/,/g, '.');  
   feeAmountSats = GuiUtils.getValue('feeAmount');
+  //txMemo = GuiUtils.getValue('txMemo');
   feeRequested = feeAmountSats;
 }
 
@@ -3019,6 +3029,7 @@ exports.getSendAmount = getSendAmount;
 exports.getFeeAmountEla = getFeeAmountEla;
 exports.getSendToAddress = getSendToAddress;
 exports.getFeeAmountSats = getFeeAmountSats;
+exports.getTxMemo = getTxMemo;
 exports.getSendStep = getSendStep;
 exports.setSendStep = setSendStep;
 exports.sendAmountToAddress = sendAmountToAddress;

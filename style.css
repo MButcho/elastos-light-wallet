@@ -592,13 +592,18 @@ button {
   color: #FFFFFF;
   letter-spacing: 0;
   height: 40px;
-  width: 100px;
+  width: 110px;
   top: 291px;
   left: 423px;
-  text-align: center;
   border: none;
   text-align: left;
   padding-left: 17px;
+}
+
+#feeAmount::placeholder {
+  opacity: 0.8;
+  color: #FFFFFF;
+  font-size: 13px;
 }
 
 .fees-text {
@@ -654,12 +659,11 @@ button {
   word-wrap: break-word;
 }
 
-.confirm-send.amount {
-  top: 240px;
-}
-
 .confirm-send.total {
   top: 220px;
+  max-width: 260px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .confirm-send span {
@@ -2027,6 +2031,31 @@ select, input {
   opacity: 1;
   transition: 0.4s;
   /*cursor: pointer;*/
+}
+
+.memo-field {
+  opacity: 0.7;
+  border: 0.7px solid #787981;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  text-align: left;
+  padding: 5px;
+  background: none;
+  margin: 0 4px;
+  position: absolute;
+  top: 290px;
+  left: 580px;
+  padding-left: 12px;
+  width: 118px;
+  height: 41px;
+}
+
+.memo-field::placeholder {
+  opacity: 0.7;
+  color: #ffffff;
 }
 
 .flex-middle {
