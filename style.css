@@ -2932,3 +2932,38 @@ input:checked + .slider:before {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
 }
+
+.confirm-table-div {
+  position: absolute;
+  width: 335px;
+  height: 240px;
+  overflow: auto;  
+  -webkit-app-region: none;
+  top: 120px;
+  padding: 10px 20px 0 20px;
+}
+
+.confirm-table {
+  overflow: auto;
+  width: 100%;
+  -webkit-app-region: none;
+  border-spacing: 7px;
+  border: 0;
+  font-size: 13px;
+  color: #B2B4C3;
+}
+
+.confirm-col1 {
+  font-family: "BioSans-Regular";
+  width: 75px;
+  text-align: right;
+  vertical-align: top;
+}
+
+.confirm-col2 {
+  font-family: "BioSans-Light";
+  max-width: 220px;
+  text-align: left;
+  word-wrap: break-word;
+  vertical-align: top;
+}
