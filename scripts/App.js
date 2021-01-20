@@ -1777,15 +1777,15 @@ const getTransactionHistoryReadyCallback = (transactionHistory) => {
         parsedTransaction.txDetailsUrl = getTransactionHistoryLink(tx.Txid);
         parsedTransaction.date = date;
         parsedTransaction.time = time;
-        parsedTransaction.memoLong = tx.Memo;
-        if (parsedTransaction.memoLong.length > 14) {
-          parsedTransaction.memoLong = parsedTransaction.memoLong.substring(14, parsedTransaction.memoLong.length).trim();
-        }
-        parsedTransaction.memo = tx.Memo;
-        if (parsedTransaction.memo.length > 14) {
-          var n = 14;
-          if (parsedTransaction.memo.indexOf("From ELABank,") >= 0) n = n + 13;
-          parsedTransaction.memo = parsedTransaction.memo.substring(n, n + 24) + '...'.trim();
+        let memo = tx.Memo;
+        if (memo.indexOf("type:text,msg:") >= 0) memo = memo.substring(14, memo.length).trim();
+        parsedTransaction.memoLong = memo;
+        if (memo.length > 14) {
+          var n = 0;
+          if (memo.indexOf("From ELABank,") >= 0) n = n + 13;
+          parsedTransaction.memo = memo.substring(n, n + 24) + '...'.trim();
+        } else {
+          parsedTransaction.memo = memo;
         }
         if (tx.CreateTime != 0) {
           let confirmedHeight = tx.Height;
