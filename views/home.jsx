@@ -217,6 +217,8 @@ module.exports = (props) => {
   module.exports.resetPage = resetPage;
   module.exports.cancelSend = cancelSend;
   module.exports.UTXOControl = UTXOControl;
+  module.exports.memoFocused = memoFocused;
+  module.exports.memoFocusOff = memoFocusOff;
   
   const SendScreenOne = (props) => {
     const visibility = props.visibility;
