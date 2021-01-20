@@ -686,6 +686,14 @@ button {
   color: #E5A776;
 }
 
+.confirm-memo-long::after {
+  content: "\00BB";
+  font-size: 18px;
+  left: 5px;
+  top: 1px;
+  position: relative;
+}
+
 .sendela-button {
   /* background-image: linear-gradient(-214deg, #F4D2AE 0%, #E5A776 100%); */
   background: #E5A776;
