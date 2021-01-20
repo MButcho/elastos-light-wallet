@@ -257,7 +257,7 @@ module.exports = (props) => {
           </tr>
           <tr>
             <td className="confirm-col1">To address:</td>
-            <td className="confirm-col2">{App.getSendToAddress()}</td>
+            <td className="confirm-col2"><span className="font-color-orange">{App.getSendToAddress()}</span></td>
           </tr>
           <tr>
             <td className="confirm-col1">Amount:</td>
@@ -269,7 +269,7 @@ module.exports = (props) => {
           </tr>
           <tr>
             <td className="confirm-col1">Total:</td>
-            <td className="confirm-col2">{App.getTotalSpendingELA()} ELA</td>
+            <td className="confirm-col2"><span className="font-color-orange">{App.getTotalSpendingELA()} ELA</span></td>
           </tr>
           <tr>
             <td className="confirm-col1">Memo:</td>
