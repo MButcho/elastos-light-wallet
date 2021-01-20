@@ -103,11 +103,11 @@ class AppView extends React.Component {
           if (Home.showPasswordModal || Home.showUTXOs) {
             Home.closeModal();
           } else {
-            if (App.getSendStep() === 2) {
-              Home.cancelSend();
+            if (GuiToggles.getMenuOpened()) {
+              GuiToggles.hideAllMenus(GuiToggles.getPage());
             } else {
-              if (GuiToggles.getMenuOpened()) {
-                GuiToggles.hideAllMenus(GuiToggles.getPage());
+              if (App.getSendStep() === 2) {
+                Home.cancelSend();
               } else {
                 Home.resetPage();
               }

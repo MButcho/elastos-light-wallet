@@ -314,10 +314,6 @@ button {
   font-weight: 600;
 }
 
-.font_size_45px {
-  font-size: 45px;
-}
-
 .currency-balance-hidden {
   font-size: 51px;
   color: #FFFFFF;
@@ -664,11 +660,24 @@ button {
   max-width: 260px;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  overflow: hidden;
+}
+
+.confirm-send.total.maxheight {
+  max-height: 86px;
 }
 
 .confirm-send span {
   font-weight: 600;
   color: #E5A776;
+}
+
+.confirm-memo-long::after {
+  content: "\00BB";
+  font-size: 18px;
+  left: 5px;
+  top: 1px;
+  position: relative;
 }
 
 .sendela-button {
@@ -1197,6 +1206,10 @@ select, input {
 
 .font_size12 {
   font-size: 12px;
+}
+
+.font_size45 {
+  font-size: 45px;
 }
 
 .display_inline_block {

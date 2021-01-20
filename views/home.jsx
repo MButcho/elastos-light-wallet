@@ -249,7 +249,7 @@ module.exports = (props) => {
         <p className="send-text">Send</p>
         <p className="confirm-send-address-label">Receiving Address</p>
         <p className="confirm-send address"><span>{App.getSendToAddress()}</span></p>
-        <p className="confirm-send total">Total spending amount with fees is <span>{App.getTotalSpendingELA()} ELA</span>{App.getTxMemo() !== '' ? " and memo " : ""}<span>{App.getTxMemo() !== '' ? App.getTxMemo() : ""}</span></p>
+        <p className="confirm-send total maxheight">Total spending amount with fees is <span>{App.getTotalSpendingELA()} ELA</span>{App.getTxMemo() !== '' ? " and memo " : ""}<span className={App.getTxMemo().length > 55 ? "confirm-memo-long" : ""} title={App.getTxMemo()}>{App.getTxMemo() !== '' ? App.getTxMemo(true) : ""}</span></p>
         <button className="send-back dark-hover cursor_def" onClick={(e) => cancelSend()}><img src="artwork/arrow.svg" alt="" className="rotate_180 arrow-back" /><span className="send-back-text">Back</span></button>        
         <button className="sendela-button scale-hover" onClick={(App.getPasswordFlag()) ? (e) => showSendModal() : (e) => sendAmountToAddress()}><p>Send ELA</p></button>        
       </div>

@@ -2216,7 +2216,15 @@ const getFeeAmountSats = () => {
   return feeAmountSats;
 };
 
-const getTxMemo = () => {
+const getTxMemo = (_short) => {
+  let maxLength = 55;
+  if (_short) {
+    if (txMemo.length > maxLength) {
+      return txMemo.substr(0,maxLength)+" ...";
+    } else {
+      return txMemo;
+    }
+  }
   return txMemo;
 };
 
