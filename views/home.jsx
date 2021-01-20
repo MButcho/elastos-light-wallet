@@ -248,7 +248,7 @@ module.exports = (props) => {
     return (
     <div id="sendTwo" className={`send-area ${visibility}`}>
       <img src="artwork/sendicon.svg" className="send-icon" alt="Send"/>
-      <p className="send-text">Send / Confirmation</p>
+      <p className="send-text">Send Review</p>
       <div className="confirm-table-div">
         <table className="confirm-table">
           <tbody>
